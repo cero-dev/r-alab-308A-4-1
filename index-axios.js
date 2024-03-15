@@ -22,6 +22,7 @@ const api = axios.create();
 api.interceptors.request.use(
   function (config) {
     progressBar.style.width = "0%";
+    document.body.style.cursor = "progress";
     config.metadata = { startTime: new Date() };
     return config;
   },
@@ -38,6 +39,7 @@ api.interceptors.response.use(
     // here we take the end time, subtract the start time and then print it to console as instructed
     console.log(`It takes ${endTime - startTime} milliseconds to complete.`);
     progressBar.style.width = "100%";
+    document.body.style.cursor = "default";
     return response;
   },
   function (e) {
