@@ -1,5 +1,5 @@
-import * as Carousel from "./Carousel.js";
-import axios from "axios";
+//import * as Carousel from "./Carousel.js";
+//import axios from "axios";
 
 // The breed selection input element.
 const breedSelect = document.getElementById("breedSelect");
@@ -22,6 +22,34 @@ const API_KEY = "live_YxX8QE2O1kMENLR3058dZoAIFlkDoHBnB0aOBUQbTelN8UH4ffFKtisxGI
  * This function should execute immediately.
  */
 
+async function initialLoad(){
+    try {
+        // here we are getting a response from the server
+        const response = await fetch('https://api.thecatapi.com/v1/breeds')
+
+        // here we read from the body of the response, and store that in an array of json breeds
+        const breeds = await response.json();
+        
+        // displaying contents in console
+        console.log(response);
+        console.log("-------------------")
+        console.log(breeds);
+
+        // here we create the option element in a value called newOption
+        // then change the value, and textcontent
+        // then append the new option to the select tool in our html
+        breeds.forEach(breed => {
+            const newOption = document.createElement('option');
+            newOption.value = breed.id;
+            newOption.textContent = breed.name;
+            breedSelect.appendChild(newOption);
+        });
+    } catch (e){
+        console.error('Something went wrong: ', e);
+    }
+}
+
+initialLoad();
 /**
  * 2. Create an event handler for breedSelect that does the following:
  * - Retrieve information on the selected breed from the cat API using fetch().
@@ -88,9 +116,9 @@ const API_KEY = "live_YxX8QE2O1kMENLR3058dZoAIFlkDoHBnB0aOBUQbTelN8UH4ffFKtisxGI
  *   you delete that favourite using the API, giving this function "toggle" functionality.
  * - You can call this function by clicking on the heart at the top right of any image.
  */
-export async function favourite(imgId) {
-  // your code here
-}
+// export async function favourite(imgId) {
+//   // your code here
+// }
 
 /**
  * 9. Test your favourite() function by creating a getFavourites() function.
