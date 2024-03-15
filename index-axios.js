@@ -8,6 +8,12 @@ const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 const API_KEY ="live_YxX8QE2O1kMENLR3058dZoAIFlkDoHBnB0aOBUQbTelN8UH4ffFKtisxGIwwTvmq";
 
+progressBar.style.width = "0%";
+
+function updateProgress(event){
+    const progress = (event.loaded / event.total) * 100;
+    progressBar.style.width = `${progress}%`
+}
 // create instance of axios, named api
 const api = axios.create();
 
@@ -15,6 +21,7 @@ const api = axios.create();
 // boiler plate taken from axios documentation
 api.interceptors.request.use(
   function (config) {
+    progressBar.style.width = "0%";
     config.metadata = { startTime: new Date() };
     return config;
   },
@@ -30,9 +37,11 @@ api.interceptors.response.use(
     
     // here we take the end time, subtract the start time and then print it to console as instructed
     console.log(`It takes ${endTime - startTime} milliseconds to complete.`);
+    progressBar.style.width = "100%";
     return response;
   },
   function (e) {
+    progressBar.style.width = "0%";
     return Promise.reject(e);
   }
 );
@@ -40,7 +49,7 @@ api.interceptors.response.use(
 async function initialLoad() {
   try {
     // here I fetch all of the breeds, and turn the breeds into an array of json objects
-    const response = await api.get("https://api.thecatapi.com/v1/breeds");
+    const response = await api.get("https://api.thecatapi.com/v1/breeds", { onDownloadProgress: updateProgress });
     const breeds = response.data;
 
     //for each breed, create an option element and set the value text content and finally appendChild to breedSelect
@@ -65,7 +74,7 @@ breedSelect.addEventListener("change", async () => {
   try {
     // here I get the images of the selected breed using the ID, and limit the images to 5 (if there is more than 5)
     const response = await api.get(
-      `https://api.thecatapi.com/v1/images/search?breed_id=${breedSelect.value}&limit=5`
+      `https://api.thecatapi.com/v1/images/search?breed_id=${breedSelect.value}&limit=5`, { onDownloadProgress: updateProgress }
     );
     const data = response.data;
 
@@ -85,7 +94,7 @@ breedSelect.addEventListener("change", async () => {
     // this try catch loop is specifically for getting data on the specific breed for the infoDump text information
     try {
       const breedResponse = await api.get(
-        `https://api.thecatapi.com/v1/images/${data[0].id}`
+        `https://api.thecatapi.com/v1/images/${data[0].id}`, { onDownloadProgress: updateProgress }
       );
       const breedData = breedResponse.data;
 
